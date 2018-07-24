@@ -16,4 +16,4 @@ If you do not have Homebrew installed, follow the instructions on [its website](
 To install the splinter library to Python, use pip by running `sudo pip install splinter`. You may have to enter your password.
 
 ### Use
-In a Terminal window, navigate to the folder in which the Python file is located (using `cd`). Then, run the file with `python coupons.py`. Make sure you use Python 2. Follow the prompts, and wait for the script to finish! If it doesn't end automatically, feel free to stop it manually and rerun it to make sure that all the coupons were saved (or do the last few manually). Go save some money!
+In a Terminal window, navigate to the folder in which the Python file is located (using `cd`). Then, run the file with `python coupons.py`. Follow the prompts, and wait for the script to finish! If it doesn't end automatically, feel free to stop it manually and rerun it to make sure that all the coupons were saved (or do the last few manually). Go save some money!

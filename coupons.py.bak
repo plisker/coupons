@@ -1,7 +1,3 @@
-from __future__ import print_function
-from builtins import str
-from builtins import input
-from builtins import range
 import splinter as sp
 import time
 
@@ -18,25 +14,25 @@ def countWalgreensCoupons(browser):
 	return browser.find_by_css('a[title="View Coupons clipped"] > span').text
 
 def logIn(pharmacy):
-	print("For this script to work, you have to log in.")
-	print("Please log in to "+ pharmacy +". When you have done so, please follow the instructions here.")
-	input("Press Enter to continue...")
-	print("Thanks! Continuing...")
+	print "For this script to work, you have to log in."
+	print "Please log in to "+ pharmacy +". When you have done so, please follow the instructions here."
+	raw_input("Press Enter to continue...")
+	print "Thanks! Continuing..."
 
 def choosePharmacy():
-	print("For which pharmacy would you like to save coupons?")
+	print "For which pharmacy would you like to save coupons?"
 	pharmacies = []
 	while not pharmacies:
-		choice = input("If Walgreens, press 'w'. For CVS, press 'c'. For both, press 'b'. After making your choice, press Enter. Thanks!\n")
-		if choice is 'w':
+		input = raw_input("If Walgreens, press 'w'. For CVS, press 'c'. For both, press 'b'. After making your choice, press Enter. Thanks!\n")
+		if input is 'w':
 			pharmacies.append(walgreens)
-		elif choice is 'c':
+		elif input is 'c':
 			pharmacies.append(cvs)
-		elif choice is 'b':
+		elif input is 'b':
 			pharmacies.append(walgreens)
 			pharmacies.append(cvs)
 		else:
-			print("I'm sorry, I didn't understand that. Try again.")
+			print "I'm sorry, I didn't understand that. Try again."
 
 	return pharmacies
 
@@ -48,7 +44,7 @@ def cvs():
 	time.sleep(5)
 
 	# Try to scroll to bottom
-	for x in range(1,25):
+	for x in xrange(1,25):
 		browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 		time.sleep(3)
 
@@ -77,8 +73,8 @@ def walgreens():
 
 	couponsSaved = countWalgreensCoupons(browser)
 
-	print("Currently have: "+ couponsSaved +" saved!")
-	print("The theoretical maximun number of coupons allowed is " + str(MAX_WALGREENS_COUPONS))
+	print "Currently have: "+ couponsSaved +" saved!"
+	print "The theoretical maximun number of coupons allowed is " + str(MAX_WALGREENS_COUPONS)
 	remaining = MAX_WALGREENS_COUPONS - int(couponsSaved)
 
 	if remaining > 0:
@@ -102,7 +98,7 @@ def walgreens():
 	return "Walgreens"
 
 def end(pharmacy):
-	print("All possible " + pharmacy + " coupons sent to card! Go save some money :)")
+	print "All possible " + pharmacy + " coupons sent to card! Go save some money :)"
 
 def main():
 	pharmacies = choosePharmacy()

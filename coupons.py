@@ -10,7 +10,8 @@ def findWalgreensCoupons(browser):
 	return browser.find_by_css('button[title="Clip coupon"]')
 
 def countWalgreensCoupons(browser):
-	return browser.find_by_css('a[title="Coupons clipped - to show clipped coupons"] > span').text
+	time.sleep(5)
+	return browser.find_by_css('a[title="View Coupons clipped"] > span').text
 
 def logIn(pharmacy):
 	print "For this script to work, you have to log in."

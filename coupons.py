@@ -4,6 +4,7 @@ from builtins import input
 from builtins import range
 import splinter as sp
 import time
+from selenium.webdriver.common.keys import Keys
 
 MAX_WALGREENS_COUPONS = 200
 
@@ -17,10 +18,26 @@ def countWalgreensCoupons(browser):
 	time.sleep(5)
 	return browser.find_by_css('a[title="View Coupons clipped"] > span').text
 
-def logIn(pharmacy):
+def logIn(pharmacy, browser):
 	print("For this script to work, you have to log in.")
 	print("Please log in to "+ pharmacy +". When you have done so, please follow the instructions here.")
-	input("Press Enter to continue...")
+	email = input("What's your "+ pharmacy +" account id? ")
+
+	if pharmacy is "CVS":
+		browser.find_by_css('a[title="opens in a new window"]').click()
+		time.sleep(1)
+		browser.find_by_id('loginPopup').fill(email)
+		browser.find_by_id('passwordPopup').fill("")
+	elif pharmacy is "Walgreens":
+		terms = browser.find_by_css('a[class="action__close-modal"]')
+		if terms:
+			terms[0].click()
+			time.sleep(1)
+		browser.find_by_css('input[name="userNameOrPhone"]').fill(email)
+		active_web_element = browser.driver.switch_to_active_element()
+		active_web_element.send_keys(Keys.ENTER)
+
+	input("Input your password on the site and press Enter to continue...")
 	print("Thanks! Continuing...")
 
 def choosePharmacy():
@@ -43,7 +60,7 @@ def choosePharmacy():
 def cvs():
 	browser = sp.Browser('chrome')
 	browser.visit('https://www.cvs.com/')
-	logIn("CVS")
+	logIn("CVS", browser)
 	browser.visit('https://www.cvs.com/extracare/home')
 	time.sleep(5)
 
@@ -58,10 +75,10 @@ def cvs():
 		browser.execute_script("window.scrollTo(0, 0);")
 		for coupon in coupons:
 			try:
+				time.sleep(2)
 				coupon.click()
 			except:
-				time.sleep(2)
-				coupons = findCVSCoupons(browser)
+				coupons[0].click()
 		browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 		time.sleep(5)
 		coupons = findCVSCoupons(browser)
@@ -70,8 +87,8 @@ def cvs():
 
 def walgreens():
 	browser = sp.Browser('chrome')
-	browser.visit('https://www.walgreens.com/')
-	logIn("Walgreens")
+	browser.visit('https://www.walgreens.com/login.jsp')
+	logIn("Walgreens", browser)
 	browser.visit('https://www.walgreens.com/offers/offers.jsp')
 	time.sleep(5)
 

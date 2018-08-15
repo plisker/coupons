@@ -5,6 +5,7 @@ from builtins import range
 import splinter as sp
 import time
 from selenium.webdriver.common.keys import Keys
+import getpass
 
 MAX_WALGREENS_COUPONS = 200
 
@@ -14,20 +15,25 @@ def findCVSCoupons(browser):
 def findWalgreensCoupons(browser):
 	return browser.find_by_css('button[title="Clip coupon"]')
 
+# Counts Walgreens Coupons that have been clipped
 def countWalgreensCoupons(browser):
 	time.sleep(5)
 	return browser.find_by_css('a[title="View Coupons clipped"] > span').text
 
 def logIn(pharmacy, browser):
-	print("For this script to work, you have to log in.")
-	print("Please log in to "+ pharmacy +". When you have done so, please follow the instructions here.")
+	print("")
+	print("Before saving you money, you have to log in.")
+	print("Please input your login credentials for "+ pharmacy +". When you have done so, press enter.")
 	email = input("What's your "+ pharmacy +" account id? ")
+	pswd = getpass.getpass()
 
 	if pharmacy is "CVS":
 		browser.find_by_css('a[title="opens in a new window"]').click()
 		time.sleep(1)
 		browser.find_by_id('loginPopup').fill(email)
-		browser.find_by_id('passwordPopup').fill("")
+		browser.find_by_id('passwordPopup').fill(pswd)
+		active_web_element = browser.driver.switch_to_active_element()
+		active_web_element.send_keys(Keys.ENTER)
 	elif pharmacy is "Walgreens":
 		terms = browser.find_by_css('a[class="action__close-modal"]')
 		if terms:
@@ -36,36 +42,36 @@ def logIn(pharmacy, browser):
 		browser.find_by_css('input[name="userNameOrPhone"]').fill(email)
 		active_web_element = browser.driver.switch_to_active_element()
 		active_web_element.send_keys(Keys.ENTER)
+		time.sleep(1)
+		browser.find_by_css('input[name="password"]').fill(pswd)
+		active_web_element = browser.driver.switch_to_active_element()
+		active_web_element.send_keys(Keys.ENTER)
 
-	input("Input your password on the site and press Enter to continue...")
 	print("Thanks! Continuing...")
+	time.sleep(8)
 
 def choosePharmacy():
 	print("For which pharmacy would you like to save coupons?")
-	pharmacies = []
-	while not pharmacies:
+	while True:
 		choice = input("If Walgreens, press 'w'. For CVS, press 'c'. For both, press 'b'. After making your choice, press Enter. Thanks!\n")
 		if choice is 'w':
-			pharmacies.append(walgreens)
+			return [walgreens]
 		elif choice is 'c':
-			pharmacies.append(cvs)
+			return [cvs]
 		elif choice is 'b':
-			pharmacies.append(walgreens)
-			pharmacies.append(cvs)
+			return [walgreens, cvs]
 		else:
 			print("I'm sorry, I didn't understand that. Try again.")
 
-	return pharmacies
-
-def cvs():
-	browser = sp.Browser('chrome')
+def cvs(browser):
+	print("Preparing to save some CVS coupons!")
 	browser.visit('https://www.cvs.com/')
 	logIn("CVS", browser)
 	browser.visit('https://www.cvs.com/extracare/home')
 	time.sleep(5)
 
 	# Try to scroll to bottom
-	for x in range(1,25):
+	for x in range(25):
 		browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 		time.sleep(3)
 
@@ -85,12 +91,17 @@ def cvs():
 
 	return "CVS"
 
-def walgreens():
-	browser = sp.Browser('chrome')
+def walgreens(browser):
+	print("Preparing to save some Walgreens coupons!")
 	browser.visit('https://www.walgreens.com/login.jsp')
 	logIn("Walgreens", browser)
 	browser.visit('https://www.walgreens.com/offers/offers.jsp')
 	time.sleep(5)
+
+	close_overlay = browser.find_by_css('button[id="closeWelcomeBOverlay"]')
+	if close_overlay:
+		close_overlay[0].click()
+		time.sleep(1)
 
 	couponsSaved = countWalgreensCoupons(browser)
 
@@ -102,9 +113,9 @@ def walgreens():
 		coupons = findWalgreensCoupons(browser)
 		while coupons:
 			browser.execute_script("window.scrollTo(0, 0);")
-			counter = 0
 			for coupon in coupons:
-				if remaining <= 0:
+				max_reached = browser.find_by_css('h3[id="confMessageCoupon"]')
+				if remaining <= 0 or max_reached:
 					return "Walgreens"
 				try:
 					coupon.click()
@@ -123,9 +134,11 @@ def end(pharmacy):
 
 def main():
 	pharmacies = choosePharmacy()
+	browser = sp.Browser('chrome')
 	for pharmacy in pharmacies:
-		name = pharmacy()
+		name = pharmacy(browser)
 		end(name)
+	browser.quit()
 
 if __name__ == "__main__":
     main()

@@ -20,7 +20,7 @@ If you do not have Homebrew installed, follow the instructions on [its website](
 To install the splinter library to Python, use pip by running `sudo pip install splinter`. You may have to enter your password.
 
 ## Use and Debugging
-### Running the Script <a name="use"></a>
+### <a name="use"></a>Running the Script
 1. In a Terminal window, navigate to the folder in which the Python file is located (using `cd`).
 2. Then, run the bash script with `./save_money.sh`. This script will automatically update your local repo with the latest code and start the Python script.
 3. Follow the prompts.

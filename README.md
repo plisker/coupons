@@ -12,7 +12,7 @@ By doing so, the coupons that typically print on your receipt will instead be se
 This script has a few dependencies that must be installed before use.
 
 ### Chromedriver
-The easiest way to install this is with Homebrew. In a command line window, run `brew install chromedriver` and it will be automatically installed.
+The easiest way to install this is with Homebrew. In a command line window, run `brew cask install chromedriver` and it will be automatically installed.
 
 If you do not have Homebrew installed, follow the instructions on [its website](https://brew.sh/ "Homebrew").
 

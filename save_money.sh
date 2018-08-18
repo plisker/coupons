@@ -5,4 +5,4 @@ git pull
 clear
 
 # Run script
-python coupons.py
+python3 coupons.py

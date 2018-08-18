@@ -84,7 +84,9 @@ def cvs(browser):
 				time.sleep(2)
 				coupon.click()
 			except:
-				coupons[0].click()
+				coupons = findCVSCoupons(browser)
+				if coupons:
+					coupons[0].click()
 		browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 		time.sleep(5)
 		coupons = findCVSCoupons(browser)

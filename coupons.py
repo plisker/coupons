@@ -18,7 +18,7 @@ def findWalgreensCoupons(browser):
 # Counts Walgreens Coupons that have been clipped
 def countWalgreensCoupons(browser):
 	time.sleep(5)
-	return browser.find_by_css('a[title="View Coupons clipped"] > span').text
+	return browser.find_by_css('a[title="View Coupons clipped"] > strong').text
 
 def logIn(pharmacy, browser):
 	print("")

@@ -10,7 +10,7 @@ import getpass
 MAX_WALGREENS_COUPONS = 200
 
 def findCVSCoupons(browser):
-	return browser.find_by_css('img[class="sendCardIcon"]')
+	return browser.find_by_css('button[class="coupon__action--send2card send_to_card_coupon coupon_tile_link coupon_link_width"]')
 
 def findWalgreensCoupons(browser):
 	return browser.find_by_css('button[title="Clip coupon"]')
@@ -28,10 +28,10 @@ def logIn(pharmacy, browser):
 	pswd = getpass.getpass()
 
 	if pharmacy is "CVS":
-		browser.find_by_css('a[title="opens in a new window"]').click()
+		browser.find_by_id('signInBtn').click()
 		time.sleep(1)
-		browser.find_by_id('loginPopup').fill(email)
-		browser.find_by_id('passwordPopup').fill(pswd)
+		browser.find_by_id('clubLoginEmail').fill(email)
+		browser.find_by_id('clubLoginPwd').fill(pswd)
 		active_web_element = browser.driver.switch_to_active_element()
 		active_web_element.send_keys(Keys.ENTER)
 	elif pharmacy is "Walgreens":
@@ -81,7 +81,7 @@ def cvs(browser):
 		browser.execute_script("window.scrollTo(0, 0);")
 		for coupon in coupons:
 			try:
-				time.sleep(2)
+				time.sleep(1)
 				coupon.click()
 			except:
 				coupons = findCVSCoupons(browser)

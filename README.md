@@ -6,7 +6,7 @@ Tired of receipts longer than the toilet paper you just bought?
 
 If you want more coupons and want to save the environment at the same time, I highly suggest signing up to [digital receipts](https://www.cvs.com/content/digital-receipt "CVS Digital Receipts") or [registering an account](https://www.walgreens.com/register/regOptions.jsp "Walgreens Accounts")!
 
-By doing so, the coupons that typically print on your receipt will instead be sent to your email; from there you'll be able to send these coupons directly to your card. Once they're on your card, they'll be applied automatically—no need to remember to bring them to the store and apply them yourself anymore!
+By doing so, the coupons that typically print on your receipt will instead be sent to your email; from there you'll be able to send these coupons directly to your card. Once they're on your card, they'll be applied automatically when you check out—no need to remember to bring them to the store and apply them yourself anymore!
 
 ## Installation
 This script has a few dependencies that must be installed before use.

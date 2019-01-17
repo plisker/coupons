@@ -23,7 +23,7 @@ class GetCoupon (threading.Thread):
     def run(self):
         self.pharmacy(self.credentials, self.browser)
         end(self.name)
-        browser.quit()
+        self.browser.quit()
 
 
 def findCVSCoupons(browser):

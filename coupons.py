@@ -37,7 +37,7 @@ def logIn(pharmacy, browser):
         time.sleep(1)
         browser.find_by_id('clubLoginEmail').fill(email)
         browser.find_by_id('clubLoginPwd').fill(pswd)
-        active_web_element = browser.driver.switch_to_active_element()
+        active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
     elif pharmacy is "Walgreens":
         terms = browser.find_by_css('a[class="action__close-modal"]')
@@ -45,11 +45,11 @@ def logIn(pharmacy, browser):
             terms[0].click()
             time.sleep(1)
         browser.find_by_css('input[name="userNameOrPhone"]').fill(email)
-        active_web_element = browser.driver.switch_to_active_element()
+        active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
         time.sleep(1)
         browser.find_by_css('input[name="password"]').fill(pswd)
-        active_web_element = browser.driver.switch_to_active_element()
+        active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
 
     print("Thanks! Continuing...")

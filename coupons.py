@@ -17,10 +17,12 @@ class GetCoupon (threading.Thread):
         self.pharmacy = pharmacy
         self.credentials = credentials
         self.browser = browser
+        self.pharmacy = pharmacy[0]
+        self.name = pharmacy[1]
 
     def run(self):
-        self.pharmacy[0](self.credentials, self.browser)
-        end(name)
+        self.pharmacy(self.credentials, self.browser)
+        end(self.name)
         browser.quit()
 
 

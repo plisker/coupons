@@ -11,6 +11,19 @@ import getpass
 MAX_WALGREENS_COUPONS = 200
 
 
+class GetCoupon (threading.Thread):
+    def __init__(self, pharmacy, credentials, browser):
+        threading.Thread.__init__(self)
+        self.pharmacy = pharmacy
+        self.credentials = credentials
+        self.browser = browser
+
+    def run(self):
+        self.pharmacy[0](self.credentials, self.browser)
+        end(name)
+        browser.quit()
+
+
 def findCVSCoupons(browser):
     return browser.find_by_css('button[class="coupon__action--send2card send_to_card_coupon coupon_tile_link coupon_link_width"]')
 
@@ -24,17 +37,20 @@ def countWalgreensCoupons(browser):
     time.sleep(5)
     return browser.find_by_css('a[title="View Coupons clipped"] > strong').text
 
+
 def getCredentials(pharmacy, credentials):
+    print("")
+    print("Before saving you money at " + pharmacy + ", you have to log in.")
     print("Please input your login credentials for " +
           pharmacy + ". When you have done so, press enter.")
     email = input("What's your " + pharmacy + " account id? ")
     pwd = getpass.getpass()
     credentials[pharmacy] = {"email": email, "pwd": pwd}
+    print("Thanks! Continuing...")
+    print("")
 
 
 def logIn(pharmacy, credentials, browser):
-    print("")
-    print("Before saving you money, you have to log in.")
 
     email = credentials[pharmacy]["email"]
     pwd = credentials[pharmacy]["pwd"]
@@ -59,7 +75,6 @@ def logIn(pharmacy, credentials, browser):
         active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
 
-    print("Thanks! Continuing...")
     time.sleep(8)
 
 
@@ -129,8 +144,8 @@ def walgreens(credentials, browser):
 
     couponsSaved = countWalgreensCoupons(browser)
 
-    print("Currently have: " + couponsSaved + " saved!")
-    print("The theoretical maximun number of coupons allowed is " +
+    print("Walgreens: Currently have: " + couponsSaved + " saved!")
+    print("Walgreens: The theoretical maximun number of coupons allowed is " +
           str(MAX_WALGREENS_COUPONS))
     remaining = MAX_WALGREENS_COUPONS - int(couponsSaved)
 
@@ -157,21 +172,22 @@ def walgreens(credentials, browser):
 
 
 def end(pharmacy):
-    print("All possible " + pharmacy +
+    print(pharmacy + ": All possible " + pharmacy +
           " coupons sent to card! Go save some money :)")
 
 
 def main():
     pharmacies = choosePharmacy()
-    browser = sp.Browser('chrome')
     credentials = {}
+    threads = []
     for pharmacy in pharmacies:
-    	getCredentials(pharmacy[1], credentials)
+        getCredentials(pharmacy[1], credentials)
 
     for pharmacy in pharmacies:
-        name = pharmacy[0](credentials, browser)
-        end(name)
-    browser.quit()
+        threads.append(GetCoupon(pharmacy, credentials, sp.Browser('chrome')))
+
+    for thread in threads:
+        thread.start()
 
 
 if __name__ == "__main__":

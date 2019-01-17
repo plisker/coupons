@@ -2,6 +2,7 @@ from __future__ import print_function
 from builtins import str
 from builtins import input
 from builtins import range
+import threading
 import splinter as sp
 import time
 from selenium.webdriver.common.keys import Keys
@@ -23,20 +24,26 @@ def countWalgreensCoupons(browser):
     time.sleep(5)
     return browser.find_by_css('a[title="View Coupons clipped"] > strong').text
 
-
-def logIn(pharmacy, browser):
-    print("")
-    print("Before saving you money, you have to log in.")
+def getCredentials(pharmacy, credentials):
     print("Please input your login credentials for " +
           pharmacy + ". When you have done so, press enter.")
     email = input("What's your " + pharmacy + " account id? ")
-    pswd = getpass.getpass()
+    pwd = getpass.getpass()
+    credentials[pharmacy] = {"email": email, "pwd": pwd}
+
+
+def logIn(pharmacy, credentials, browser):
+    print("")
+    print("Before saving you money, you have to log in.")
+
+    email = credentials[pharmacy]["email"]
+    pwd = credentials[pharmacy]["pwd"]
 
     if pharmacy is "CVS":
         browser.find_by_id('signInBtn').click()
         time.sleep(1)
         browser.find_by_id('clubLoginEmail').fill(email)
-        browser.find_by_id('clubLoginPwd').fill(pswd)
+        browser.find_by_id('clubLoginPwd').fill(pwd)
         active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
     elif pharmacy is "Walgreens":
@@ -48,7 +55,7 @@ def logIn(pharmacy, browser):
         active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
         time.sleep(1)
-        browser.find_by_css('input[name="password"]').fill(pswd)
+        browser.find_by_css('input[name="password"]').fill(pwd)
         active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
 
@@ -63,19 +70,19 @@ def choosePharmacy():
                        "both, press 'b'. After making your choice, press " +
                        "Enter. Thanks!\n")
         if choice is 'w':
-            return [walgreens]
+            return [(walgreens, "Walgreens")]
         elif choice is 'c':
-            return [cvs]
+            return [(cvs, "CVS")]
         elif choice is 'b':
-            return [walgreens, cvs]
+            return [(walgreens, "Walgreens"), (cvs, "CVS")]
         else:
             print("I'm sorry, I didn't understand that. Try again.")
 
 
-def cvs(browser):
+def cvs(credentials, browser):
     print("Preparing to save some CVS coupons!")
     browser.visit('https://www.cvs.com/')
-    logIn("CVS", browser)
+    logIn("CVS", credentials, browser)
     browser.visit('https://www.cvs.com/extracare/home')
     time.sleep(5)
 
@@ -108,10 +115,10 @@ def cvs(browser):
     return "CVS"
 
 
-def walgreens(browser):
+def walgreens(credentials, browser):
     print("Preparing to save some Walgreens coupons!")
     browser.visit('https://www.walgreens.com/login.jsp')
-    logIn("Walgreens", browser)
+    logIn("Walgreens", credentials, browser)
     browser.visit('https://www.walgreens.com/offers/offers.jsp')
     time.sleep(5)
 
@@ -157,8 +164,12 @@ def end(pharmacy):
 def main():
     pharmacies = choosePharmacy()
     browser = sp.Browser('chrome')
+    credentials = {}
     for pharmacy in pharmacies:
-        name = pharmacy(browser)
+    	getCredentials(pharmacy[1], credentials)
+
+    for pharmacy in pharmacies:
+        name = pharmacy[0](credentials, browser)
         end(name)
     browser.quit()
 

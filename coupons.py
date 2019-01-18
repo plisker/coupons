@@ -26,8 +26,25 @@ class GetCoupon (threading.Thread):
         self.browser.quit()
 
 
-def findCVSCoupons(browser):
-    return browser.find_by_css('button[class="coupon__action--send2card send_to_card_coupon coupon_tile_link coupon_link_width"]')
+def findCVSCoupons(browser, skipCoupons):
+    potentialCoupons = browser.find_by_css(
+        'button[class="coupon_tile_link coupon_link_width"]')
+    foundCoupons = []
+
+    for potentialCoupon in potentialCoupons:
+        if (not potentialCoupon.find_by_text('Join now') and
+            not potentialCoupon.find_by_text('Print')):
+            foundCoupons.append(potentialCoupon)
+
+    foundCoupons += browser.find_by_css('button[class="' +
+                                        'coupon__action--send2card ' +
+                                        'send_to_card_coupon ' +
+                                        'coupon_tile_link coupon_link_width"]')
+
+    finalCopuons = [
+        coupon for coupon in foundCoupons if coupon not in skipCoupons]
+
+    return finalCopuons
 
 
 def findWalgreensCoupons(browser):
@@ -109,7 +126,8 @@ def cvs(credentials, browser):
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(3)
 
-    coupons = findCVSCoupons(browser)
+    skipCoupons = []
+    coupons = findCVSCoupons(browser, skipCoupons)
 
     while coupons:
         browser.execute_script("window.scrollTo(0, 0);")
@@ -117,8 +135,23 @@ def cvs(credentials, browser):
             try:
                 time.sleep(1)
                 coupon.click()
+
+                # TODO: Test this!
+                if browser.find_by_text("We're sorry. We're not able to " +
+                                        "send this coupon to your card. " +
+                                        "Please try again later or call " +
+                                        "us at 1-800-SHOP CVS for help."):
+                    skipCoupons.append(coupon)
             except:
-                coupons = findCVSCoupons(browser)
+
+                # TODO: Test this!
+                if browser.find_by_text("We're sorry. We're not able to " +
+                                        "send this coupon to your card. " +
+                                        "Please try again later or call " +
+                                        "us at 1-800-SHOP CVS for help."):
+                    skipCoupons.append(coupon)
+
+                coupons = findCVSCoupons(browser, skipCoupons)
                 try:
                     if coupons:
                         coupons[0].click()
@@ -127,7 +160,7 @@ def cvs(credentials, browser):
         browser.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(5)
-        coupons = findCVSCoupons(browser)
+        coupons = findCVSCoupons(browser, skipCoupons)
 
     return "CVS"
 

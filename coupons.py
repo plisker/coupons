@@ -27,13 +27,13 @@ class GetCoupon (threading.Thread):
 
 
 def findCVSCoupons(browser, skipCoupons):
-    potentialCoupons = browser.find_by_css(
-        'button[class="coupon_tile_link coupon_link_width"]')
+    potentialCoupons = browser.find_by_css('button[class="coupon_tile_link ' +
+                                           'coupon_link_width"]')
     foundCoupons = []
 
     for potentialCoupon in potentialCoupons:
         if (not potentialCoupon.find_by_text('Join now') and
-            not potentialCoupon.find_by_text('Print')):
+                not potentialCoupon.find_by_text('Print')):
             foundCoupons.append(potentialCoupon)
 
     foundCoupons += browser.find_by_css('button[class="' +

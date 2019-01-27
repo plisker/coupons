@@ -35,10 +35,15 @@ def findCVSCoupons(browser, skipCoupons):
     foundCoupons += browser.find_by_css(
         'button[ng-click="percentOffCtrl.sentToCard($event)"]')
 
+    foundCoupons += browser.find_by_css(
+        'button[ng-click="manufacturerCtrl.sentToCard($event)"]')
+
     foundCoupons += browser.find_by_css('button[class="' +
                                         'coupon__action--send2card ' +
                                         'send_to_card_coupon ' +
                                         'coupon_tile_link coupon_link_width"]')
+
+    foundCoupons = list(set(foundCoupons))
 
     finalCopuons = [
         coupon for coupon in foundCoupons if coupon not in skipCoupons]
@@ -169,7 +174,7 @@ def cvs(credentials, browser):
         time.sleep(5)
         coupons = findCVSCoupons(browser, skipCoupons)
 
-    print(len(skipCoupons) + " were skipped.")
+    print("CVS: " + str(len(skipCoupons)) + " were skipped.")
     return "CVS"
 
 

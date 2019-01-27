@@ -27,14 +27,13 @@ class GetCoupon (threading.Thread):
 
 
 def findCVSCoupons(browser, skipCoupons):
-    potentialCoupons = browser.find_by_css('button[class="coupon_tile_link ' +
-                                           'coupon_link_width"]')
     foundCoupons = []
 
-    for potentialCoupon in potentialCoupons:
-        if (not potentialCoupon.find_by_text('Join now') and
-                not potentialCoupon.find_by_text('Print')):
-            foundCoupons.append(potentialCoupon)
+    foundCoupons += browser.find_by_css(
+        'button[ng-click="dollarOffCtrl.sentToCard($event)"]')
+
+    foundCoupons += browser.find_by_css(
+        'button[ng-click="percentOffCtrl.sentToCard($event)"]')
 
     foundCoupons += browser.find_by_css('button[class="' +
                                         'coupon__action--send2card ' +
@@ -121,11 +120,17 @@ def cvs(credentials, browser):
     time.sleep(5)
 
     # Try to scroll to bottom
-    for x in range(25):
+    print("CVS: Scrolling to bottom of page")
+    scroll_number = 25
+    for x in range(scroll_number):
         browser.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
+        if (x % 5 == 0 and x != scroll_number):
+            y = scroll_number - x
+            print("CVS: Scrolling " + str(y) + " more times")
         time.sleep(3)
 
+    print("CVS: Finished scrolling")
     skipCoupons = []
     coupons = findCVSCoupons(browser, skipCoupons)
 
@@ -142,6 +147,7 @@ def cvs(credentials, browser):
                                         "Please try again later or call " +
                                         "us at 1-800-SHOP CVS for help."):
                     skipCoupons.append(coupon)
+                    print("CVS: There was an error saving a coupon.")
             except:
 
                 # TODO: Test this!
@@ -150,6 +156,7 @@ def cvs(credentials, browser):
                                         "Please try again later or call " +
                                         "us at 1-800-SHOP CVS for help."):
                     skipCoupons.append(coupon)
+                    print("CVS: There was an error saving a coupon.")
 
                 coupons = findCVSCoupons(browser, skipCoupons)
                 try:
@@ -162,6 +169,7 @@ def cvs(credentials, browser):
         time.sleep(5)
         coupons = findCVSCoupons(browser, skipCoupons)
 
+    print(len(skipCoupons) + " were skipped.")
     return "CVS"
 
 

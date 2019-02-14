@@ -17,7 +17,10 @@ The easiest way to install this is with Homebrew. In a command line window, run 
 If you do not have Homebrew installed, follow the instructions on [its website](https://brew.sh/ "Homebrew").
 
 ### Splinter
-To install the splinter library to Python, use pip by running `sudo pip install splinter`. You may have to enter your password.
+To install the splinter library to Python, use pip by running `pip install splinter`.
+
+### Six
+I am temporarily also using `six` for compatibility across different versions of Python. Please install with `pip install six`. I intend to remove this dependency in the future and deprecate Python 2.
 
 ## Use and Debugging
 ### <a name="use"></a>Running the Script

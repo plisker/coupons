@@ -81,8 +81,11 @@ def logIn(pharmacy, credentials, browser):
     if pharmacy is "CVS":
         browser.find_by_id('signInBtn').click()
         time.sleep(1)
-        browser.find_by_id('clubLoginEmail').fill(email)
-        browser.find_by_id('clubLoginPwd').fill(pwd)
+        browser.find_by_id('email').fill(email)
+        active_web_element = browser.driver.switch_to.active_element
+        active_web_element.send_keys(Keys.ENTER)
+        time.sleep(1)
+        browser.find_by_id('password').fill(pwd)
         active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
     elif pharmacy is "Walgreens":
@@ -98,7 +101,7 @@ def logIn(pharmacy, credentials, browser):
         active_web_element = browser.driver.switch_to.active_element
         active_web_element.send_keys(Keys.ENTER)
 
-    time.sleep(8)
+    time.sleep(6)
 
 
 def choosePharmacy():

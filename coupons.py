@@ -145,33 +145,32 @@ def cvs(credentials, browser):
     while coupons:
         browser.execute_script("window.scrollTo(0, 0);")
         for coupon in coupons:
-            try:
-                time.sleep(1)
-                coupon.click()
-
-                # TODO: Test this!
-                if browser.find_by_text("We're sorry. We're not able to " +
-                                        "send this coupon to your card. " +
-                                        "Please try again later or call " +
-                                        "us at 1-800-SHOP CVS for help."):
-                    skipCoupons.append(coupon)
-                    print("CVS: There was an error saving a coupon.")
-            except:
-
-                # TODO: Test this!
-                if browser.find_by_text("We're sorry. We're not able to " +
-                                        "send this coupon to your card. " +
-                                        "Please try again later or call " +
-                                        "us at 1-800-SHOP CVS for help."):
-                    skipCoupons.append(coupon)
-                    print("CVS: There was an error saving a coupon.")
-
-                coupons = findCVSCoupons(browser, skipCoupons)
-                try:
-                    if coupons:
-                        coupons[0].click()
-                except:
-                    pass
+            time.sleep(1)
+            coupon.click()
+            # try:
+            #     # TODO: Test this!
+            #     # <p class="error_s2c">We're sorry. We're not able to send this coupon to your card. Please try again later or call us at 1-800-SHOP CVS for help.</p>
+            #     if browser.find_by_text("We're sorry. We're not able to " +
+            #                             "send this coupon to your card. " +
+            #                             "Please try again later or call " +
+            #                             "us at 1-800-SHOP CVS for help."):
+            #         skipCoupons.append(coupon)
+            #         print("CVS: There was an error saving a coupon.")
+            # except:
+            #     # TODO: Test this!
+            #     # <p class="error_s2c">We're sorry. We're not able to send this coupon to your card. Please try again later or call us at 1-800-SHOP CVS for help.</p>
+            #     if browser.find_by_text("We're sorry. We're not able to " +
+            #                             "send this coupon to your card. " +
+            #                             "Please try again later or call " +
+            #                             "us at 1-800-SHOP CVS for help."):
+            #         skipCoupons.append(coupon)
+            #         print("CVS: There was an error saving a coupon.")
+            #     coupons = findCVSCoupons(browser, skipCoupons)
+            #     try:
+            #         if coupons:
+            #             coupons[0].click()
+            #     except:
+            #         pass
         browser.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(5)

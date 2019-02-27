@@ -142,11 +142,19 @@ def cvs(credentials, browser):
     skipCoupons = []
     coupons = findCVSCoupons(browser, skipCoupons)
 
+    error_count = 0
     while coupons:
+        error_count++
+        if error_count > 5:
+            break
         browser.execute_script("window.scrollTo(0, 0);")
         for coupon in coupons:
-            time.sleep(1)
-            coupon.click()
+            try:
+                time.sleep(1)
+                coupon.click()
+            except:
+                break
+
             # try:
             #     # TODO: Test this!
             #     # <p class="error_s2c">We're sorry. We're not able to send this coupon to your card. Please try again later or call us at 1-800-SHOP CVS for help.</p>
@@ -173,7 +181,7 @@ def cvs(credentials, browser):
             #         pass
         browser.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(5)
+        time.sleep(2)
         coupons = findCVSCoupons(browser, skipCoupons)
 
     print("CVS: " + str(len(skipCoupons)) + " were skipped.")

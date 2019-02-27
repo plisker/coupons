@@ -144,7 +144,7 @@ def cvs(credentials, browser):
 
     error_count = 0
     while coupons:
-        error_count++
+        error_count += 1
         if error_count > 5:
             break
         browser.execute_script("window.scrollTo(0, 0);")

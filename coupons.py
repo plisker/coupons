@@ -1,3 +1,5 @@
+"""Finds and automatically clips coupons from your choice of pharmacy"""
+
 from __future__ import print_function
 from builtins import str
 from builtins import input
@@ -20,6 +22,8 @@ RUN_BOTH = 'b'
 
 
 class GetCoupon(threading.Thread):
+    """Creates new thread for clipping pharmacy coupons"""
+
     def __init__(self, pharmacy, credentials, browser):
         threading.Thread.__init__(self)
         self.pharmacy = pharmacy
@@ -35,6 +39,7 @@ class GetCoupon(threading.Thread):
 
 
 def find_cvs_coupons(browser, skip_coupons):
+    """Uses splinter to find all the Walgreens coupon buttons"""
     found_coupons = []
 
     found_coupons += browser.find_by_css(
@@ -47,7 +52,8 @@ def find_cvs_coupons(browser, skip_coupons):
         'button[ng-click="manufacturerCtrl.sentToCard($event)"]')
 
     found_coupons += browser.find_by_css(
-        'button[class="coupon__action--send2card send_to_card_coupon coupon_tile_link coupon_link_width"')
+        'button[class="coupon__action--send2card send_to_card_coupon ' +
+        'coupon_tile_link coupon_link_width"')
 
     found_coupons += filter(filter_cvs_non_coupon, browser.find_by_css(
         'p[class="mfc-prevent-backclick coupon_tile_link_colors"'))
@@ -61,20 +67,24 @@ def find_cvs_coupons(browser, skip_coupons):
 
 
 def filter_cvs_non_coupon(button):
+    """Filters which CVS buttons are actually buttons to clip a coupon"""
     return button.text.lower() == "send to card"
 
 
 def find_walgreens_coupons(browser):
+    """Uses splinter to find all the Walgreens coupon buttons"""
     return browser.find_by_css('button[title="Clip coupon"]')
 
 
 # Counts Walgreens Coupons that have been clipped
 def count_walgreens_coupons(browser):
+    """Counds how many Walgreens coupons have been clipped, since there's a max allowed"""
     time.sleep(5)
     return browser.find_by_css('a[title="View Coupons clipped"] > strong').text
 
 
 def get_credentials(pharmacy, credentials):
+    """Requests credentials from user at the onset to help threading and faster run"""
     print("")
     print("Before saving you money at " + pharmacy + ", you have to log in.")
     print("Please input your login credentials for " +
@@ -87,6 +97,7 @@ def get_credentials(pharmacy, credentials):
 
 
 def log_in(pharmacy, credentials, browser):
+    """Logs in to pharmacy with previously saved credentials"""
     email = credentials[pharmacy]["email"]
     pwd = credentials[pharmacy]["pwd"]
 
@@ -119,16 +130,20 @@ def log_in(pharmacy, credentials, browser):
 
 
 def beat_captcha():
+    """Pauses script for user to solve CAPTCHA.
+        Continues once user has indicated success. Might not be thread-safe"""
     print("Pass the CAPTCHA on the page so that the script can continue.")
     while True:
         choice = input("Have you passed the CAPTCHA? (y/n): ")
         if choice is YES:
             return
 
-        print("Try again. If you weren't able to beat the CAPTCHA, close the script with control+C and restart")
+        print("Try again. If you weren't able to beat the CAPTCHA, close " +
+              "the script with control+C and restart")
 
 
 def choose_pharmacy():
+    """Presents the user options via CLI on which pharmacy script to run"""
     print("For which pharmacy would you like to save coupons?")
     while True:
         choice = input("If Walgreens, press 'w'. For CVS, press 'c'. For " +
@@ -145,6 +160,7 @@ def choose_pharmacy():
 
 
 def cvs(credentials, browser):
+    """Main script for CVS collecting coupons"""
     print("Preparing to save some CVS coupons!")
     browser.visit("https://www.cvs.com/account/login/")
     beat_captcha()
@@ -180,30 +196,6 @@ def cvs(credentials, browser):
             except:
                 break
 
-            # try:
-            #     # TODO: Test this!
-            #     # <p class="error_s2c">We're sorry. We're not able to send this coupon to your card. Please try again later or call us at 1-800-SHOP CVS for help.</p>
-            #     if browser.find_by_text("We're sorry. We're not able to " +
-            #                             "send this coupon to your card. " +
-            #                             "Please try again later or call " +
-            #                             "us at 1-800-SHOP CVS for help."):
-            #         skip_coupons.append(coupon)
-            #         print("CVS: There was an error saving a coupon.")
-            # except:
-            #     # TODO: Test this!
-            #     # <p class="error_s2c">We're sorry. We're not able to send this coupon to your card. Please try again later or call us at 1-800-SHOP CVS for help.</p>
-            #     if browser.find_by_text("We're sorry. We're not able to " +
-            #                             "send this coupon to your card. " +
-            #                             "Please try again later or call " +
-            #                             "us at 1-800-SHOP CVS for help."):
-            #         skip_coupons.append(coupon)
-            #         print("CVS: There was an error saving a coupon.")
-            #     coupons = find_cvs_coupons(browser, skip_coupons)
-            #     try:
-            #         if coupons:
-            #             coupons[0].click()
-            #     except:
-            #         pass
         browser.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
@@ -214,6 +206,7 @@ def cvs(credentials, browser):
 
 
 def walgreens(credentials, browser):
+    """Main script for Walgreens collecting coupons"""
     print("Preparing to save some Walgreens coupons!")
     browser.visit('https://www.walgreens.com/login.jsp')
     log_in(WALGREENS_PHARMACY, credentials, browser)
@@ -255,11 +248,13 @@ def walgreens(credentials, browser):
 
 
 def end(pharmacy):
+    """Closing message when pharmacy script ends"""
     print(pharmacy + ": All possible " + pharmacy +
           " coupons sent to card! Go save some money :)")
 
 
 def main():
+    """Entry point for script"""
     pharmacies = choose_pharmacy()
     credentials = {}
     threads = []
